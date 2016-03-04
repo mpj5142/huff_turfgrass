@@ -34,4 +34,5 @@ plotMDS(y, col=colors, pch=points)
 abline(h=0, col="green", lty=2, lwd=2) #add line for sperating AM and PM
 #Legend will need some work
 legend("center", legend=c("Non-infected morning","Infected morning","Non-infected evening","Infected evening"),col=c("blue","red","blue","red"),pch=c(16,16,17,17))
+title(main="Multi-Dimensional analysis of Turfgrass transcriptome")
 
