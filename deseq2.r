@@ -59,4 +59,8 @@ write.csv(as.data.frame(results_all), file="results_all_deseq2.csv")
 write.csv(as.data.frame(results_am), file="results_am_deseq2.csv")
 write.csv(as.data.frame(results_pm), file="results_pm_deseq2.csv")
 
+#Export normalized counts to files
+write.csv(counts(dds_all, normalized=TRUE), file="counts_all_norm_deseq2.csv")
+write.csv(counts(dds_sep, normalized=TRUE), file="counts_sep_norm_deseq2.csv")
+
 #######Working on visualization later...
