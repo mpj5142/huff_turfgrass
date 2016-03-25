@@ -38,28 +38,25 @@ dds_all<-dds_all[rowSums(counts(dds_all))>1,]
 dds_sep<-DESeq(dds_sep)
 dds_all<-DESeq(dds_all)
 
-#Generate pairwise comparisions
-results_all<-results(dds_all, contrast=c("infection", "inf", "non-inf")) 	#All infected or non-infected samples
-results_am<-results(dds_sep, contrast=c("condition", "inf-am", "non-inf-am")) 	#Infected/non-infected in AM
-results_pm<-results(dds_sep, contrast=c("condition", "inf-pm", "non-inf-pm"))	#Infected/non-infected in PM
+#Generate pairwise comparisions. P-value is set to 0.05, default in DESeq is 0.1
+results_all<-results(dds_all, contrast=c("infection", "inf", "non-inf"), alpha=0.05) 	#All infected or non-infected samples
+results_am<-results(dds_sep, contrast=c("condition", "inf-am", "non-inf-am"), alpha=0.05) 	#Infected/non-infected in AM
+results_pm<-results(dds_sep, contrast=c("condition", "inf-pm", "non-inf-pm"), alpha=0.05)	#Infected/non-infected in PM
 
+summary(results_all)
+summary(results_am)
+summary(results_pm)
 
-#######Working on visualization/output later...
+#MA Plot comparing mean expression to log-fold change (quality check)
+plotMA(results_all, main="Infected versus Non-Infected--All")
+plotMA(results_am, main="Infected versus Non-Infected--AM")
+plotMA(results_pm, main="Infected versus Non-Infected--PM")
 
+##Can also get plot counts for individual genes--once annotation occurs, this may be useful. Check documentation
 
-#Construct multi-dimensional graph for clustering of samples
-colors<-rep(c(rep(c("blue"),4),rep(c("red"),4)),2) #Color by infected/non-infected
-points<-c(rep(c(16),8),rep(c(17),8)) #Point shape by morning/evening
-plotMDS(y, col=colors, pch=points)
-abline(h=0, col="green", lty=2, lwd=2) #add line for sperating AM and PM
-#Legend will need some work
-legend("center", legend=c("Non-infected morning","Infected morning","Non-infected evening","Infected evening"),col=c("blue","red","blue","red"),pch=c(16,16,17,17))
-title(main="Multi-Dimensional analysis of Turfgrass transcriptome")
+#Export results to text files
+write.csv(as.data.frame(results_all), file="results_all_deseq2.csv")
+write.csv(as.data.frame(results_am), file="results_am_deseq2.csv")
+write.csv(as.data.frame(results_pm), file="results_pm_deseq2.csv")
 
-#Write as output all (unfiltered) differentialy expressed genes, sorted by FDR
-write.csv(topTags(diffexp_all, n=nrow(diffexp_all$table))$table, file="diffexp_all.csv")
-write.csv(topTags(diffexp_am, n=nrow(diffexp_am$table))$table, file="diffexp_am.csv")
-write.csv(topTags(diffexp_pm, n=nrow(diffexp_pm$table))$table, file="diffexp_pm.csv")
-write.csv(topTags(diffexp_inf, n=nrow(diffexp_inf$table))$table, file="diffexp_inf.csv")
-write.csv(topTags(diffexp_noninf, n=nrow(diffexp_noninf$table))$table, file="diffexp_noninf.csv")
-write.csv(topTags(diffexp_time, n=nrow(diffexp_time$table))$table, file="diffexp_time.csv")
+#######Working on visualization later...
